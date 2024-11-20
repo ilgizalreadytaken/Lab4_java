@@ -5,18 +5,15 @@ import n3.Point;
 import n4.ListProcessor;
 import n5.ListFilter;
 import n6.ListReducer;
-import n7.ListCollector;
+import n7.CollectionUtil;
 
-
+import java.util.*;
+import java.util.function.Function;
 
 import java.util.List;
 import java.util.ArrayList;
 import java.util.Scanner;
 import java.util.Arrays; // Этот импорт нужен для работы с Arrays.toString
-import java.util.Map;
-import java.util.Set;
-
-
 
 
 public class Main {
@@ -255,34 +252,60 @@ public class Main {
                     break;
 
                 case 7:
+                    // Пример 1: Разделение чисел на положительные и отрицательные
+                    List<Integer> numbers7 = Arrays.asList(1, -3, 7); // Исходный список чисел
 
-                    // Задание 1: Разделяем список чисел на положительные и отрицательные
-                    System.out.println("1. Разделение чисел на положительные и отрицательные:");
-                    // Вызов метода splitNumbersBySign, который принимает список чисел и возвращает Map, где
-                    // ключами являются строки ("positive", "negative"), а значениями - списки чисел.
-                    Map<String, List<Integer>> result1 = ListCollector.splitNumbersBySign(numbersForTask1);
-                    // Результат для положительных чисел. Получаем список по ключу "positive".
-                    System.out.println("Положительные: " + result1.get("positive"));
-                    // Результат для отрицательных чисел. Получаем список по ключу "negative".
-                    System.out.println("Отрицательные: " + result1.get("negative"));
+                    // Создаем коллекцию для положительных чисел, используя метод collect из CollectionUtil
+                    List<Integer> positiveNumbers = CollectionUtil.collect(
+                            numbers7,                   // Список чисел
+                            ArrayList::new,             // Фабрика для создания ArrayList
+                            num -> num > 0              // Условие: выбираем только положительные числа
+                    );
 
-                    // Задание 2: Разделение строк по длине
-                    System.out.println("2. Разделение строк по длине:");
-                    // Вызов метода splitStringsByLength, который принимает список строк и возвращает список,
-                    // где каждая подсписок содержит строки одинаковой длины.
-                    List<List<String>> result2 = ListCollector.splitStringsByLength(stringsForTask1);
-                    // Выводим результат. Каждое подмножество в списке result2 содержит строки одной длины.
-                    System.out.println(result2);
+                    // Создаем коллекцию для отрицательных чисел с аналогичным методом
+                    List<Integer> negativeNumbers7 = CollectionUtil.collect(
+                            numbers7,                   // Список чисел
+                            ArrayList::new,             // Фабрика для создания ArrayList
+                            num -> num < 0              // Условие: выбираем только отрицательные числа
+                    );
 
-                    // Задание 3: Получение уникальных строк
-                    System.out.println("3. Уникальные строки:");
-                    // Вызов метода getUniqueStrings, который принимает список строк и возвращает Set,
-                    // который гарантирует, что все строки будут уникальными (без повторений).
-                    Set<String> result3 = ListCollector.getUniqueStrings(stringsForTask2);
-                    // Выводим результат. result3 будет содержать только уникальные строки из исходного списка.
-                    System.out.println(result3);
+                    // Выводим положительные и отрицательные числа
+                    System.out.println("Положительные числа: " + positiveNumbers);
+                    System.out.println("Отрицательные числа: " + negativeNumbers7);
+
+                    // Пример 2: Разбиение строк по длине
+                    List<String> strings7 = Arrays.asList("qwerty", "asdfg", "zx", "qw"); // Исходный список строк
+
+                    // Создаем Map для группировки строк по их длине
+                    Map<Integer, List<String>> groupedStrings = new HashMap<>();
+                    for (String str : strings7) { // Перебираем каждую строку из списка
+                        int length = str.length(); // Получаем длину строки
+                        // Группируем строки по длине, добавляем строку в соответствующий список
+                        groupedStrings
+                                .computeIfAbsent(length, k -> new ArrayList<>()) // Если длина еще не встречалась, создаем новый список
+                                .add(str); // Добавляем строку в соответствующую группу
+                    }
+
+                    // Выводим строки, сгруппированные по длине
+                    System.out.println("Строки по длине: " + groupedStrings);
+
+
+                    // Пример 3: Уникальные строки (использование Set для удаления дубликатов)
+                    List<String> uniqueStrings = Arrays.asList("qwerty", "asdfg", "qwerty", "qw"); // Исходный список строк
+
+                    // Используем Set для хранения уникальных строк, так как Set не допускает дубликатов
+                    Set<String> uniqueSet = CollectionUtil.collect(
+                            uniqueStrings,             // Список строк
+                            HashSet::new,              // Фабрика для создания HashSet
+                            str -> true                 // Условие: добавляем все строки, фильтрация не нужна
+                    );
+
+                    // Выводим уникальные строки (дубликаты будут удалены)
+                    System.out.println("Уникальные строки: " + uniqueSet);
 
                     break;
+
+
 
                 case 0:
                     exit = true; // Завершаем цикл, если выбрали выход
